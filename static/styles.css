@@ -1,0 +1,256 @@
+@import url('http://fonts.cdnfonts.com/css/friz-quadrata');
+
+body {
+    overflow: hidden;
+    text-align: center;
+    font-family: 'Friz Quadrata', sans-serif;
+}
+
+h1 {
+    width: 100%;
+    height: 10vh;
+    text-align: center;
+}
+
+h2 {
+    width: 100%;
+    height: 8vh;
+    text-align: center;
+}
+
+button {
+    font-size: 5vh;
+}
+
+#page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+#others {
+    display: flex;
+    width: 90%;
+    height: 80%;
+}
+
+#center {
+    float: left;
+    height: 100%;
+    width: calc(100% - 26vh);
+    display: flex;
+    flex-direction: column;
+}
+
+#middle {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+#top_row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 8vh;
+}
+
+#drop_wrap {
+    height: 23vh;
+    width: 100%;
+    align-self: center;
+    align-content: space-between;
+    justify-content: center;
+    display: flex;
+}
+
+#drop_inner {
+    height: 100%;
+    width: 50%;
+    display: flex;
+    align-self: center;
+    justify-content: left;
+    padding-left:5%;
+}
+
+#hand {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    width: 100%;
+    height: 13%;
+}
+
+#buttons {
+    height: 20vh;
+    display: flex;
+}
+
+#recent {
+    width: 100%;
+    height: 70%;
+    font-size: 6vh;
+    text-align: right;
+}
+
+#remaining {
+    width: 100%;
+    height: 30%;
+    font-size: 4vh;
+    text-align: center;
+}
+
+#next_drop {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#divider {
+    width: 5vw;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    font-size: 2vh;
+    justify-content: space-evenly;
+}
+
+#pad {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+}
+
+#new_game {
+    width: 25%;
+    height: 100%;
+}
+
+#lobby_status {
+    width: 75%;
+    height: 100%;
+    font-size: 6vh;
+    color: red;
+}
+
+#lobbies {
+    width: 100%;
+    height: 72vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.status {
+    height: 8vh;
+    font-size: 6vh;
+    text-align: center;
+}
+
+.side_row {
+    float: left;
+    height: 100%;
+    width: 8vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.tile {
+    align-self: center;
+}
+
+.highlight {
+    -webkit-filter: drop-shadow(2px 0px 0 red)
+                    drop-shadow(0px 2px 0 red)
+                    drop-shadow(-2px -0px 0 red)
+                    drop-shadow(-0px -2px 0 red);
+    filter: drop-shadow(2px 0px 0 red)
+            drop-shadow(0px 2px 0 red)
+            drop-shadow(-2px -0px 0 red)
+            drop-shadow(-0px -2px 0 red);
+}
+
+.side {
+    height: min(calc(100 * 8vh / 121), 6%);
+}
+
+.top {
+    width: min(calc(100 * 8vh / 121), 5%);
+}
+
+.bot {
+    width: min(calc(100 * 18vh / 121), 5%);
+}
+
+.flip {
+    transform: rotate(180deg);
+}
+
+.drop {
+    height: 100%
+}
+
+.button {
+    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.side_player {
+    height: 100%;
+    width: 5vh;
+    float: left;
+    writing-mode: vertical-rl;
+    font-size: 4vh
+}
+
+.player {
+    height: 5vh;
+    width: 100%;
+    font-size: 4vh;
+}
+
+.selectable:hover {
+    filter: brightness(50%);
+    cursor: pointer;
+}
+
+.winner {
+    font-weight: bold;
+    color: green;
+}
+
+.error {
+    color: red;
+}
+
+.lobby {
+    width: 100%;
+    height: 20vh;
+    display: flex;
+    outline: 2px solid black;
+}
+
+.lobby:hover {
+    background-color: gray;
+    cursor: pointer;
+}
+
+.lobby_id {
+    width: 30%;
+    height: 100%;
+    font-size: 10vh;
+}
+
+.lobby_players {
+    width: 70%;
+    height: 100%;
+    font-size: 10vh;
+}
