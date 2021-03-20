@@ -51,16 +51,6 @@ def broadcast_game(game, event, ret=None):
 def index():
     return render_template("index.html")
 
-# @socketio.on('join')
-# def handle_join():
-#     send_games()
-    # player_id = game.new_player(request.sid)
-    # emit('joinRes', player_id)
-    # if player_id != -1 and game.players == 4:
-    #     time.sleep(1)
-    #     start = game.start_game()
-    #     emit('start', start, json=True, broadcast=True)
-
 @socketio.on('createGame')
 def handle_create_game():
     ret = create_game()
@@ -94,7 +84,6 @@ def handle_update_lobbies():
 @socketio.on('drop')
 def handle_drop(tile_num):
     broadcast_player(request.sid, 'dropRes', tile_num)
-    # emit('dropRes', tile_num, broadcast=True)
 
 @socketio.on('draw')
 def handle_draw():
@@ -104,18 +93,15 @@ def handle_draw():
             game = game_map[gid]
             ret = game.draw()
             broadcast_player(request.sid, 'drawRes', ret)
-    # emit('drawRes', ret, broadcast=True)
 
 @socketio.on('combo')
 def handle_combo(pair):
     ret = {'key': pair[0], 'player': pair[1]}
     broadcast_player(request.sid, 'comboRes', ret)
-    # emit('comboRes', ret, json=True, broadcast=True)
 
 @socketio.on('chi')
 def handle_chi():
     broadcast_player(request.sid, 'chiRes')
-    # emit('chiRes', broadcast=True)
 
 @socketio.on('hidKong')
 def handle_hid_kong():
@@ -125,12 +111,10 @@ def handle_hid_kong():
 @socketio.on('smallKong')
 def handle_small_kong(tile):
     broadcast_player(request.sid, 'smallKongRes', tile)
-    # emit('smallKongRes', tile, broadcast=True)
 
 @socketio.on('hu')
 def handle_hu(player):
     broadcast_player(request.sid, 'huRes', player)
-    # emit('huRes', player, broadcast=True)
 
 @socketio.on('sendHand')
 def handle_send_hand(hand_info):
@@ -142,7 +126,6 @@ def handle_send_hand(hand_info):
             ret = game.gather_hands(player, tiles, combos)
             if ret != None:
                 broadcast_player(request.sid, 'sendHandRcv', ret)
-        # emit('sendHandRcv', ret, json=True, broadcast=True)
 
 @socketio.on('reset')
 def handle_reset():

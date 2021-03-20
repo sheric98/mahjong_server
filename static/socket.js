@@ -13,10 +13,6 @@ app.ports.firebaseJoinGame.subscribe(function(gid) {
     socket.emit('joinGame', gid);
 });
 
-// app.ports.firebaseJoin.subscribe(function() {
-//     socket.emit('join');
-// });
-
 app.ports.firebaseDrop.subscribe(function(tileNum) {
     socket.emit('drop', tileNum);
 });
