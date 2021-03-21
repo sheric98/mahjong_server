@@ -22,7 +22,8 @@ import Lobby exposing (lobbyPage)
 import Server exposing
     ( DealRet, Model, Msg(..), Action(..), Receive(..), State(..)
     , initGame, dropTileInfo, addTileInfo, addComboInfo, ComboRet
-    , smallKongInfo, HandRet, handsInfo, GameLobby )
+    , smallKongInfo, HandRet, handsInfo, GameLobby, ComboSend
+    , HuRet )
 import Tile exposing (Tile, tileKey, keyTile, shuffleConvert)
 
 -- Ports
@@ -30,21 +31,21 @@ import Tile exposing (Tile, tileKey, keyTile, shuffleConvert)
 port firebaseJoin : () -> Cmd msg
 port firebaseJoinRes : (Int -> msg) -> Sub msg
 port firebaseStart : (DealRet -> msg) -> Sub msg
-port firebaseDraw : () -> Cmd msg
+port firebaseDraw : Int -> Cmd msg
 port firebaseDrawRcv : (Int -> msg) -> Sub msg
 port firebaseDrop : Int -> Cmd msg
 port firebaseDropRcv : (Int -> msg) -> Sub msg
-port firebaseChi : () -> Cmd msg
+port firebaseChi : Int -> Cmd msg
 port firebaseChiRcv : (() -> msg) -> Sub msg
-port firebaseCombo : (Int, Int) -> Cmd msg
+port firebaseCombo : ComboSend -> Cmd msg
 port firebaseComboRcv : (ComboRet -> msg) -> Sub msg
-port firebaseHu : Int -> Cmd msg
-port firebaseHuRcv : (Int -> msg) -> Sub msg
+port firebaseHu : (Int, List Int) -> Cmd msg
+port firebaseHuRcv : (HuRet -> msg) -> Sub msg
 port firebaseSendHand : (Int, List Int, List Int) -> Cmd msg
 port firebaseHandRcv : (List HandRet -> msg) -> Sub msg
 port firebaseSmallKong : Int -> Cmd msg
 port firebaseSmallKongRcv : (Int -> msg) -> Sub msg
-port firebaseHidKong : () -> Cmd msg
+port firebaseHidKong : Int -> Cmd msg
 port firebaseHidKongRcv : (() -> msg) -> Sub msg
 port firebaseReset : () -> Cmd msg
 port firebaseResetAll : (Bool -> msg) -> Sub msg
@@ -127,8 +128,15 @@ tileClick tile model =
                             else if chiRet == -2 then
                                 errorRet "Chi chain must contain tile you Chi" model
                             else
+                                let
+                                    send = { key = chiRet
+                                        , player = game.player
+                                        , is_kong = False
+                                        , add_tile = False
+                                        }
+                                in
                                 -- valid chi select
-                                ( model, firebaseCombo (chiRet, game.player) )
+                                ( model, firebaseCombo send )
                         Nothing -> defaultRet model
                 SelectKong ->
                     -- check if we can kong the selected tile
@@ -136,8 +144,13 @@ tileClick tile model =
                         let
                             combo = Combo.Quad tile
                             key = Combo.comboKey combo
+                            send = { key = key
+                                , player = game.player
+                                , is_kong = True
+                                , add_tile = False
+                                }
                         in
-                        ( model, firebaseCombo (key, game.player))
+                        ( model, firebaseCombo send )
                     else
                         errorRet "Can't concealed Kong on that tile" model
 
@@ -218,7 +231,7 @@ drewRcv num model =
                 if game.turn == game.player then
                     let
                         tile = shuffleConvert num
-                        newHand = addTile tile game.hand
+                        newHand = Mahjong.drawTile tile game.hand
                         newGame = { otherGame
                             | hand = newHand
                             , drawn = Just tile
@@ -231,8 +244,8 @@ drewRcv num model =
             defaultRet model
 
 -- receives the response from server a player submitting a combo (key of combo)
-comboRcv : Int -> Int -> Model -> (Model, Cmd Msg)
-comboRcv key player model =
+comboRcv : Int -> Int -> Bool -> Model -> (Model, Cmd Msg)
+comboRcv key player add_tile model =
     case model.game of
         Just game ->
             let
@@ -256,7 +269,16 @@ comboRcv key player model =
             in
             if player == game.player then
                 let
-                    newHand = addCombo combo game.hand
+                    hand =
+                        if add_tile then
+                            case game.dropped of
+                                Just tile ->
+                                    addTile tile game.hand
+                                Nothing ->
+                                    game.hand
+                        else
+                            game.hand
+                    newHand = addCombo combo hand
                     newGame = { otherGame
                         | hand = newHand
                         }
@@ -281,7 +303,20 @@ chiRcv model =
                     , errorMsg = Nothing
                     }
             in
-            ( { model | game = Just newGame }, Cmd.none )
+            if game.turn == game.player then
+                case game.dropped of
+                    Just tile ->
+                        let
+                            newHand = addTile tile game.hand
+                            chiGame = { newGame
+                                | hand = newHand
+                                }
+                        in
+                        ( { model | game = Just chiGame }, Cmd.none )
+                    Nothing ->
+                        ( { model | game = Just newGame }, Cmd.none )
+            else
+                ( { model | game = Just newGame }, Cmd.none )
         Nothing -> defaultRet model
 
 --receive message that a player is intending to hidden kong
@@ -302,20 +337,27 @@ kongRcv model =
         Nothing -> defaultRet model
 
 -- receives message that a player has won
-winRcv : Int -> Model -> (Model, Cmd Msg)
-winRcv player model =
+winRcv : Int -> (List Int) -> Model -> (Model, Cmd Msg)
+winRcv player comboList model =
     case model.game of
         Just game ->
             let
                 newState = Over
                 prevAction = Just Server.Hu
+                winCombos = List.map keyCombo comboList |> Combo.comboCountsFromList
+                hand =
+                    if player == game.player then
+                        Mahjong.makeWinningHand winCombos
+                    else
+                        game.hand
                 newGame = { game
                     | turn = player
                     , state = newState
                     , prevAction = prevAction
                     , errorMsg = Nothing
+                    , hand = hand
                     }
-                (tiles, combos) = Mahjong.handToLists game.hand
+                (tiles, combos) = Mahjong.handToLists hand
             in
             ( { model | game = Just newGame }
             , firebaseSendHand (game.player, tiles, combos) )
@@ -383,12 +425,13 @@ pungButton model =
                                 let
                                     combo = Triple tile
                                     key = Combo.comboKey combo
-                                    newHand = addTile tile game.hand
-                                    newGame = { game
-                                        | hand = newHand
+                                    send = { key = key
+                                        , player = game.player
+                                        , is_kong = False
+                                        , add_tile = True
                                         }
                                 in
-                                ( { model | game = Just newGame }, firebaseCombo (key, game.player) )
+                                ( model, firebaseCombo send )
                             else
                                 errorRet errStr model
                 -- if not actionable, then can't pung
@@ -409,13 +452,7 @@ chiButton model =
                         errorRet "No tile to Chi." model
                     Just tile ->
                         if Mahjong.canChi tile game.hand then
-                            let
-                                newHand = addTile tile game.hand
-                                newGame = { game
-                                    | hand = newHand
-                                    }
-                            in
-                            ( { model | game = Just newGame }, firebaseChi () )
+                            ( model, firebaseChi game.player )
                         else
                             errorRet "Can't Chi." model
         Nothing -> defaultRet model
@@ -433,7 +470,7 @@ drawButton model =
                     errorRet "Can't draw right now" model
                 else
                     -- otherwise simply send signal to draw a card
-                    ( model, firebaseDraw () )
+                    ( model, firebaseDraw game.player )
         Nothing -> defaultRet model
 
 -- logic for when someone clicks on button to kong
@@ -455,12 +492,13 @@ kongButton model =
                                 let
                                     combo = Quad tile
                                     key = Combo.comboKey combo
-                                    newHand = addTile tile game.hand
-                                    newGame = { game
-                                        | hand = newHand
+                                    send = { key = key
+                                        , player = game.player
+                                        , is_kong = True
+                                        , add_tile = True
                                         }
                                 in
-                                ( { model | game = Just newGame }, firebaseCombo (key, game.player) )
+                                ( model, firebaseCombo send )
                             else
                                 errorRet errorMsg model
                 SelectDrop ->
@@ -481,7 +519,7 @@ kongButton model =
                                     ( model, firebaseSmallKong key )
                                 else if Mahjong.canHidKong game.hand then
                                     -- hidden kong send to server
-                                    ( model, firebaseHidKong () )
+                                    ( model, firebaseHidKong game.player )
                                 else
                                     errorRet errorMsg model
                 -- any other state means player can't kong
@@ -503,15 +541,12 @@ huButton model =
                         Just tile ->
                             case Mahjong.canHu tile game.hand of
                                 Just combos ->
-                                    -- valid Hu. Send to server.
                                     let
                                         newHand = Mahjong.makeWinningHand combos
-                                        newGame = { game
-                                            | hand = newHand
-                                            }
+                                        (_, comboList) = Mahjong.handToLists newHand
                                     in
-                                    ( { model | game = Just newGame }
-                                    , firebaseHu game.player )
+                                    -- valid Hu. Send to server.
+                                    ( model, firebaseHu (game.player, comboList) )
                                 Nothing ->
                                     errorRet errorMsg model
                         Nothing ->
@@ -525,12 +560,10 @@ huButton model =
                             Just combos ->
                                 let
                                     newHand = Mahjong.makeWinningHand combos
-                                    newGame = { game
-                                        | hand = newHand
-                                        }
+                                    (_, comboList) = Mahjong.handToLists newHand
                                 in
-                                ( { model | game = Just newGame}
-                                , firebaseHu game.player )
+                                ( model
+                                , firebaseHu (game.player, comboList) )
                             Nothing ->
                                 errorRet errorMsg model
                     else
@@ -563,10 +596,10 @@ update msg model =
             case receive of
                 Dropped num -> dropRcv num model
                 Drew num -> drewRcv num model 
-                Comboed key player -> comboRcv key player model
+                Comboed key player add_tile -> comboRcv key player add_tile model
                 WillChi -> chiRcv model
                 WillKong -> kongRcv model
-                Win player -> winRcv player model
+                Win player comboList -> winRcv player comboList model
                 Hands hands -> handsRcv hands model
                 SmallKong num -> smallKongRcv num model
 
@@ -640,9 +673,9 @@ subscriptions model =
         , firebaseResetAll Reset
         , firebaseDrawRcv (\x -> Rcv (Drew x))
         , firebaseDropRcv (\x -> Rcv (Dropped x))
-        , firebaseComboRcv (\comboRet -> Rcv (Comboed comboRet.key comboRet.player))
+        , firebaseComboRcv (\comboRet -> Rcv (Comboed comboRet.key comboRet.player comboRet.add_tile))
         , firebaseChiRcv (\() -> (Rcv WillChi))
-        , firebaseHuRcv (\x -> Rcv (Win x))
+        , firebaseHuRcv (\x -> Rcv (Win x.player x.combos))
         , firebaseSmallKongRcv (\x -> Rcv (SmallKong x))
         , firebaseHidKongRcv (\() -> (Rcv WillKong))
         , firebaseHandRcv (\x -> (Rcv (Hands x)))

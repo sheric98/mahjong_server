@@ -17,28 +17,28 @@ app.ports.firebaseDrop.subscribe(function(tileNum) {
     socket.emit('drop', tileNum);
 });
 
-app.ports.firebaseDraw.subscribe(function() {
-    socket.emit('draw');
+app.ports.firebaseDraw.subscribe(function(player) {
+    socket.emit('draw', player);
 });
 
-app.ports.firebaseCombo.subscribe(function(pair) {
-    socket.emit('combo', pair);
+app.ports.firebaseCombo.subscribe(function(send) {
+    socket.emit('combo', send);
 });
 
-app.ports.firebaseChi.subscribe(function() {
-    socket.emit('chi');
+app.ports.firebaseChi.subscribe(function(player) {
+    socket.emit('chi', player);
 });
 
-app.ports.firebaseHidKong.subscribe(function() {
-    socket.emit('hidKong');
+app.ports.firebaseHidKong.subscribe(function(player) {
+    socket.emit('hidKong', player);
 });
 
 app.ports.firebaseSmallKong.subscribe(function(tile) {
     socket.emit('smallKong', tile);
 });
 
-app.ports.firebaseHu.subscribe(function(player) {
-    socket.emit('hu', player);
+app.ports.firebaseHu.subscribe(function(pair) {
+    socket.emit('hu', pair);
 });
 
 app.ports.firebaseSendHand.subscribe(function(handInfo) {
@@ -86,8 +86,8 @@ socket.on('smallKongRes', function(tile) {
     app.ports.firebaseSmallKongRcv.send(tile);
 });
 
-socket.on('huRes', function(player) {
-    app.ports.firebaseHuRcv.send(player);
+socket.on('huRes', function(ret) {
+    app.ports.firebaseHuRcv.send(ret);
 });
 
 socket.on('sendHandRcv', function(ret) {

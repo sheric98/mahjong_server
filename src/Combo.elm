@@ -72,6 +72,10 @@ comboSetFromList combos =
 emptyComboCounts : ComboCounts
 emptyComboCounts = KeyCounts.empty comboKey keyCombo
 
+comboCountsFromList : List Combo -> ComboCounts
+comboCountsFromList combos =
+    List.foldl (\c set -> KeyCounts.insert c set |> .map) emptyComboCounts combos
+
 -- tail recursive to generate key for list of combos
 comboCountsKey_tr : Int -> Int -> List Combo -> Int
 comboCountsKey_tr acc n combos =

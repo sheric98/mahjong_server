@@ -60,16 +60,29 @@ type alias DealRet =
     , starting : Int
     }
 
+type alias ComboSend =
+    { key : Int
+    , player : Int
+    , is_kong : Bool
+    , add_tile : Bool
+    }
+
 -- return from server of a combo. Returns the key of the combo and the player
 -- who issued the combo
 type alias ComboRet =
     { key : Int
     , player : Int
+    , add_tile : Bool
     }
 
 -- return from a server for information on a player's hand
 type alias HandRet =
     { tiles : List Int
+    , combos : List Int
+    }
+
+type alias HuRet =
+    { player : Int
     , combos : List Int
     }
 
@@ -90,10 +103,10 @@ type alias Model =
 type Receive
     = Dropped Int
     | Drew Int
-    | Comboed Int Int
+    | Comboed Int Int Bool
     | WillChi
     | WillKong
-    | Win Int
+    | Win Int (List Int)
     | SmallKong Int
     | Hands (List HandRet)
     | Lobbies (List GameLobby)

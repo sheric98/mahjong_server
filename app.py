@@ -47,6 +47,18 @@ def broadcast_game(game, event, ret=None):
         else:
             emit(event, room=sid)
 
+def get_player_game(sid):
+    if sid in player_map:
+        gid = player_map[sid]
+        if gid in game_map:
+            game = game_map[gid]
+            return game
+    return None
+
+def game_can_transition(sid, expected, is_kong=False):
+    game = get_player_game(sid)
+    return game is not None and game.can_transition(expected, is_kong)
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -67,12 +79,13 @@ def handle_join_game(gid):
     if gid in game_map:
         game = game_map[gid]
         player_id = game.new_player(request.sid)
-        player_map[request.sid] = gid
+        if player_id != -1:
+            player_map[request.sid] = gid
     emit('joinRes', player_id)
     send_games(broadcast=True)
 
     # start game if ready
-    if game is not None and player_id != -1 and game.players == 4:
+    if game is not None and player_id != -1 and game.can_start():
         time.sleep(1)
         start = game.start_game()
         broadcast_player(request.sid, 'start', start)
@@ -83,38 +96,51 @@ def handle_update_lobbies():
 
 @socketio.on('drop')
 def handle_drop(tile_num):
-    broadcast_player(request.sid, 'dropRes', tile_num)
+    game = get_player_game(request.sid)
+    if game is not None and game.drop() is not None:
+        broadcast_player(request.sid, 'dropRes', tile_num)
 
 @socketio.on('draw')
-def handle_draw():
-    if request.sid in player_map:
-        gid = player_map[request.sid]
-        if gid in game_map:
-            game = game_map[gid]
-            ret = game.draw()
+def handle_draw(player):
+    game = get_player_game(request.sid)
+    if game is not None:
+        ret = game.draw(player)
+        if ret is not None:
             broadcast_player(request.sid, 'drawRes', ret)
 
 @socketio.on('combo')
-def handle_combo(pair):
-    ret = {'key': pair[0], 'player': pair[1]}
-    broadcast_player(request.sid, 'comboRes', ret)
+def handle_combo(send):
+    print(send)
+    ret = {'key': send['key'], 'player': send['player'], 'add_tile': send['add_tile']}
+    game = get_player_game(request.sid)
+    if game is not None and game.combo(send['player'], send['is_kong']) is not None:
+        broadcast_player(request.sid, 'comboRes', ret)
 
 @socketio.on('chi')
-def handle_chi():
-    broadcast_player(request.sid, 'chiRes')
+def handle_chi(player):
+    game = get_player_game(request.sid)
+    if game is not None and game.chi(player) is not None:
+        broadcast_player(request.sid, 'chiRes')
 
 @socketio.on('hidKong')
-def handle_hid_kong():
-    broadcast_player(request.sid, 'hidKongRes')
-    # emit('hidKongRes', broadcast=True)
+def handle_hid_kong(player):
+    game = get_player_game(request.sid)
+    if game is not None and game.hidKong(player) is not None:
+        broadcast_player(request.sid, 'hidKongRes')
 
 @socketio.on('smallKong')
 def handle_small_kong(tile):
-    broadcast_player(request.sid, 'smallKongRes', tile)
+    game = get_player_game(request.sid)
+    if game is not None and game.combo(game.turn, True) is not None:
+        broadcast_player(request.sid, 'smallKongRes', tile)
 
 @socketio.on('hu')
-def handle_hu(player):
-    broadcast_player(request.sid, 'huRes', player)
+def handle_hu(pair):
+    player, combos = pair
+    ret = {'player': player, 'combos': combos}
+    game = get_player_game(request.sid)
+    if game is not None and game.hu(player) is not None:
+        broadcast_player(request.sid, 'huRes', ret)
 
 @socketio.on('sendHand')
 def handle_send_hand(hand_info):
