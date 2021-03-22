@@ -49,6 +49,10 @@ app.ports.firebaseReset.subscribe(function() {
     socket.emit('reset');
 });
 
+app.ports.firebaseRestart.subscribe(function() {
+    socket.emit('restart');
+});
+
 // Receiving from Python
 socket.on('noCreate', function() {
     app.ports.firebaseNoCreate.send(null);

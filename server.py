@@ -97,6 +97,8 @@ class GameInfo:
         starting = random.randint(0, self.players - 1)
         hands[starting].append(self.cards.pop(0))
         self.turn = starting
+        self.state = State.DROP
+        self.hand_info = [None] * self.players
         ret = {'hands': hands, 'starting': starting}
         return ret
 
@@ -118,7 +120,6 @@ class GameInfo:
             if self.can_transition(DROP_SET):
                 self.turn = (self.turn + 1) % 4
                 self.lock.release()
-                print("new state is", self.state)
                 return 0
             else:
                 self.lock.release()

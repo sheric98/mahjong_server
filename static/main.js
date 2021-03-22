@@ -7036,31 +7036,8 @@ var $author$project$Server$addTileInfo = F2(
 			return info;
 		}
 	});
-var $elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				$elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(0),
-				entries));
-	});
-var $author$project$Main$firebaseSendHand = _Platform_outgoingPort(
-	'firebaseSendHand',
-	function ($) {
-		var a = $.a;
-		var b = $.b;
-		var c = $.c;
-		return A2(
-			$elm$json$Json$Encode$list,
-			$elm$core$Basics$identity,
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$int(a),
-					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(b),
-					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(c)
-				]));
-	});
+var $author$project$TileMap$Map = $elm$core$Basics$identity;
+var $author$project$TileMap$empty = $elm$core$Dict$empty;
 var $author$project$Combo$comboKey = function (combo) {
 	switch (combo.$) {
 		case 0:
@@ -7077,110 +7054,6 @@ var $author$project$Combo$comboKey = function (combo) {
 			return ($author$project$Tile$tileKey(tile) + $author$project$Chain$totChains) + (2 * $author$project$Tile$uniqueTiles);
 	}
 };
-var $author$project$Mahjong$handToLists = function (_v0) {
-	var un = _v0.a;
-	var _v1 = _v0.b;
-	var comboCnts = _v1.a;
-	var cnt = _v1.b;
-	var unKeys = A2($elm$core$List$map, $author$project$Tile$tileKey, un.q);
-	var matchKeys = A2(
-		$elm$core$List$map,
-		$author$project$Combo$comboKey,
-		A2(
-			$elm$core$List$concatMap,
-			function (pair) {
-				return A2($elm$core$List$repeat, pair.b, pair.a);
-			},
-			$author$project$KeyCounts$toList(comboCnts)));
-	return _Utils_Tuple2(unKeys, matchKeys);
-};
-var $author$project$Tile$shuffleConvert = function (x) {
-	return (x < 36) ? A2($author$project$Tile$Numeric, 0, ((x / 4) | 0) + 1) : ((x < 72) ? A2($author$project$Tile$Numeric, 1, (((x - 36) / 4) | 0) + 1) : ((x < 108) ? A2($author$project$Tile$Numeric, 2, (((x - 72) / 4) | 0) + 1) : ((x < 124) ? $author$project$Tile$Single(
-		$author$project$Tile$W(
-			$author$project$Tile$windConvert(((x - 108) / 4) | 0))) : $author$project$Tile$Single(
-		$author$project$Tile$D(
-			$author$project$Tile$dragonConvert(((x - 124) / 4) | 0))))));
-};
-var $author$project$Main$drewRcv = F2(
-	function (num, model) {
-		var _v0 = model.a;
-		if (!_v0.$) {
-			var game = _v0.a;
-			if (num < 0) {
-				var newState = 5;
-				var newRemaining = 0;
-				var newGame = _Utils_update(
-					game,
-					{
-						aW: $elm$core$Maybe$Nothing,
-						aA: $elm$core$Maybe$Just(4),
-						a4: newRemaining,
-						P: newState
-					});
-				var _v1 = $author$project$Mahjong$handToLists(game.V);
-				var tiles = _v1.a;
-				var combos = _v1.b;
-				return _Utils_Tuple2(
-					_Utils_update(
-						model,
-						{
-							a: $elm$core$Maybe$Just(newGame)
-						}),
-					$author$project$Main$firebaseSendHand(
-						_Utils_Tuple3(game.f, tiles, combos)));
-			} else {
-				var newState = 0;
-				var newRemaining = game.a4 - 1;
-				var newInfo = A2($author$project$Server$addTileInfo, game.m, game.ar);
-				var otherGame = _Utils_update(
-					game,
-					{
-						aW: $elm$core$Maybe$Nothing,
-						ar: newInfo,
-						aA: $elm$core$Maybe$Just(4),
-						a4: newRemaining,
-						P: newState
-					});
-				if (_Utils_eq(game.m, game.f)) {
-					var tile = $author$project$Tile$shuffleConvert(num);
-					var newHand = A2($author$project$Mahjong$addTile, tile, game.V);
-					var newGame = _Utils_update(
-						otherGame,
-						{
-							ai: $elm$core$Maybe$Just(tile),
-							V: newHand
-						});
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								a: $elm$core$Maybe$Just(newGame)
-							}),
-						$elm$core$Platform$Cmd$none);
-				} else {
-					return _Utils_Tuple2(
-						_Utils_update(
-							model,
-							{
-								a: $elm$core$Maybe$Just(otherGame)
-							}),
-						$elm$core$Platform$Cmd$none);
-				}
-			}
-		} else {
-			return $author$project$Main$defaultRet(model);
-		}
-	});
-var $author$project$Server$Drop = 5;
-var $author$project$Mahjong$removeTiles = F3(
-	function (n, tile, _v0) {
-		var un = _v0.a;
-		var m = _v0.b;
-		var newUn = A3($author$project$Mahjong$removeTiles_aux, n, tile, un);
-		return A2($author$project$Mahjong$Hand, newUn, m);
-	});
-var $author$project$TileMap$Map = $elm$core$Basics$identity;
-var $author$project$TileMap$empty = $elm$core$Dict$empty;
 var $elm$core$Basics$pow = _Basics_pow;
 var $author$project$Combo$totCombos = $author$project$Chain$totChains + (3 * $author$project$Tile$uniqueTiles);
 var $author$project$Combo$comboCountsKey_tr = F3(
@@ -7509,6 +7382,138 @@ var $author$project$Mahjong$updateWinning = function (hand) {
 		{U: canWin, Y: winnable});
 	return A2($author$project$Mahjong$Hand, newUn, m);
 };
+var $author$project$Mahjong$drawTile = F2(
+	function (tile, hand) {
+		return $author$project$Mahjong$updateWinning(
+			A2($author$project$Mahjong$addTile, tile, hand));
+	});
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var $author$project$Main$firebaseSendHand = _Platform_outgoingPort(
+	'firebaseSendHand',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		var c = $.c;
+		return A2(
+			$elm$json$Json$Encode$list,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					$elm$json$Json$Encode$int(a),
+					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(b),
+					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(c)
+				]));
+	});
+var $author$project$Mahjong$handToLists = function (_v0) {
+	var un = _v0.a;
+	var _v1 = _v0.b;
+	var comboCnts = _v1.a;
+	var cnt = _v1.b;
+	var unKeys = A2($elm$core$List$map, $author$project$Tile$tileKey, un.q);
+	var matchKeys = A2(
+		$elm$core$List$map,
+		$author$project$Combo$comboKey,
+		A2(
+			$elm$core$List$concatMap,
+			function (pair) {
+				return A2($elm$core$List$repeat, pair.b, pair.a);
+			},
+			$author$project$KeyCounts$toList(comboCnts)));
+	return _Utils_Tuple2(unKeys, matchKeys);
+};
+var $author$project$Tile$shuffleConvert = function (x) {
+	return (x < 36) ? A2($author$project$Tile$Numeric, 0, ((x / 4) | 0) + 1) : ((x < 72) ? A2($author$project$Tile$Numeric, 1, (((x - 36) / 4) | 0) + 1) : ((x < 108) ? A2($author$project$Tile$Numeric, 2, (((x - 72) / 4) | 0) + 1) : ((x < 124) ? $author$project$Tile$Single(
+		$author$project$Tile$W(
+			$author$project$Tile$windConvert(((x - 108) / 4) | 0))) : $author$project$Tile$Single(
+		$author$project$Tile$D(
+			$author$project$Tile$dragonConvert(((x - 124) / 4) | 0))))));
+};
+var $author$project$Main$drewRcv = F2(
+	function (num, model) {
+		var _v0 = model.a;
+		if (!_v0.$) {
+			var game = _v0.a;
+			if (num < 0) {
+				var newState = 5;
+				var newRemaining = 0;
+				var newGame = _Utils_update(
+					game,
+					{
+						aW: $elm$core$Maybe$Nothing,
+						aA: $elm$core$Maybe$Just(4),
+						a4: newRemaining,
+						P: newState
+					});
+				var _v1 = $author$project$Mahjong$handToLists(game.V);
+				var tiles = _v1.a;
+				var combos = _v1.b;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							a: $elm$core$Maybe$Just(newGame)
+						}),
+					$author$project$Main$firebaseSendHand(
+						_Utils_Tuple3(game.f, tiles, combos)));
+			} else {
+				var newState = 0;
+				var newRemaining = game.a4 - 1;
+				var newInfo = A2($author$project$Server$addTileInfo, game.m, game.ar);
+				var otherGame = _Utils_update(
+					game,
+					{
+						aW: $elm$core$Maybe$Nothing,
+						ar: newInfo,
+						aA: $elm$core$Maybe$Just(4),
+						a4: newRemaining,
+						P: newState
+					});
+				if (_Utils_eq(game.m, game.f)) {
+					var tile = $author$project$Tile$shuffleConvert(num);
+					var newHand = A2($author$project$Mahjong$drawTile, tile, game.V);
+					var newGame = _Utils_update(
+						otherGame,
+						{
+							ai: $elm$core$Maybe$Just(tile),
+							V: newHand
+						});
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								a: $elm$core$Maybe$Just(newGame)
+							}),
+						$elm$core$Platform$Cmd$none);
+				} else {
+					return _Utils_Tuple2(
+						_Utils_update(
+							model,
+							{
+								a: $elm$core$Maybe$Just(otherGame)
+							}),
+						$elm$core$Platform$Cmd$none);
+				}
+			}
+		} else {
+			return $author$project$Main$defaultRet(model);
+		}
+	});
+var $author$project$Server$Drop = 5;
+var $author$project$Mahjong$removeTiles = F3(
+	function (n, tile, _v0) {
+		var un = _v0.a;
+		var m = _v0.b;
+		var newUn = A3($author$project$Mahjong$removeTiles_aux, n, tile, un);
+		return A2($author$project$Mahjong$Hand, newUn, m);
+	});
 var $author$project$Mahjong$dropTile = F2(
 	function (tile, hand) {
 		return $author$project$Mahjong$updateWinning(

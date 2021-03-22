@@ -164,6 +164,13 @@ def handle_reset():
         del player_map[request.sid]
     emit('resetRcv')
 
+@socketio.on('restart')
+def handle_restart():
+    game = get_player_game(request.sid)
+    if game is not None:
+        start = game.start_game()
+        broadcast_player(request.sid, 'start', start)
+
 # terminate game
 def terminate_game(game):
     for sid in game.get_sids():
