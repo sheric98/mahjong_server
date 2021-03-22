@@ -3,7 +3,7 @@ port module Main exposing (main)
 {- Main.elm:
 
    This file serves as the connection between client and server logic incoporating
-   Elm's MVC as well as the ports to firebase. It handles all
+   Elm's MVC as well as the ports to socket. It handles all
    requests that a user makes, including button presses, and responses from servers
    and updates the player's game state accordingly. It also has contains the logic
    for when certain actions available for a player to do, otherwise updating
@@ -28,34 +28,34 @@ import Tile exposing (Tile, tileKey, keyTile, shuffleConvert)
 
 -- Ports
 
-port firebaseJoin : () -> Cmd msg
-port firebaseJoinRes : (Int -> msg) -> Sub msg
-port firebaseStart : (DealRet -> msg) -> Sub msg
-port firebaseDraw : Int -> Cmd msg
-port firebaseDrawRcv : (Int -> msg) -> Sub msg
-port firebaseDrop : Int -> Cmd msg
-port firebaseDropRcv : (Int -> msg) -> Sub msg
-port firebaseChi : Int -> Cmd msg
-port firebaseChiRcv : (() -> msg) -> Sub msg
-port firebaseCombo : ComboSend -> Cmd msg
-port firebaseComboRcv : (ComboRet -> msg) -> Sub msg
-port firebaseHu : (Int, List Int) -> Cmd msg
-port firebaseHuRcv : (HuRet -> msg) -> Sub msg
-port firebaseSendHand : (Int, List Int, List Int) -> Cmd msg
-port firebaseHandRcv : (List HandRet -> msg) -> Sub msg
-port firebaseSmallKong : Int -> Cmd msg
-port firebaseSmallKongRcv : (Int -> msg) -> Sub msg
-port firebaseHidKong : Int -> Cmd msg
-port firebaseHidKongRcv : (() -> msg) -> Sub msg
-port firebaseReset : () -> Cmd msg
-port firebaseResetAll : (Bool -> msg) -> Sub msg
-port firebaseRestart : () -> Cmd msg
-port firebaseUpdateLobbies : () -> Cmd msg
-port firebaseLobbiesRcv : (List GameLobby -> msg) -> Sub msg 
-port firebaseCreateGame : () -> Cmd msg
-port firebaseNoCreate : (() -> msg) -> Sub msg
-port firebaseJoinGame : Int -> Cmd msg
-port firebaseTerminated : (() -> msg) -> Sub msg
+port socketJoin : () -> Cmd msg
+port socketJoinRes : (Int -> msg) -> Sub msg
+port socketStart : (DealRet -> msg) -> Sub msg
+port socketDraw : Int -> Cmd msg
+port socketDrawRcv : (Int -> msg) -> Sub msg
+port socketDrop : Int -> Cmd msg
+port socketDropRcv : (Int -> msg) -> Sub msg
+port socketChi : Int -> Cmd msg
+port socketChiRcv : (() -> msg) -> Sub msg
+port socketCombo : ComboSend -> Cmd msg
+port socketComboRcv : (ComboRet -> msg) -> Sub msg
+port socketHu : (Int, List Int) -> Cmd msg
+port socketHuRcv : (HuRet -> msg) -> Sub msg
+port socketSendHand : (Int, List Int, List Int) -> Cmd msg
+port socketHandRcv : (List HandRet -> msg) -> Sub msg
+port socketSmallKong : Int -> Cmd msg
+port socketSmallKongRcv : (Int -> msg) -> Sub msg
+port socketHidKong : Int -> Cmd msg
+port socketHidKongRcv : (() -> msg) -> Sub msg
+port socketReset : () -> Cmd msg
+port socketResetAll : (Bool -> msg) -> Sub msg
+port socketRestart : () -> Cmd msg
+port socketUpdateLobbies : () -> Cmd msg
+port socketLobbiesRcv : (List GameLobby -> msg) -> Sub msg 
+port socketCreateGame : () -> Cmd msg
+port socketNoCreate : (() -> msg) -> Sub msg
+port socketJoinGame : Int -> Cmd msg
+port socketTerminated : (() -> msg) -> Sub msg
 
 -- Init
 
@@ -66,7 +66,7 @@ initModel =
 init : () -> (Model, Cmd Msg)
 init _ =
     ( initModel
-    , firebaseUpdateLobbies ()
+    , socketUpdateLobbies ()
     )
 
 -- Update
@@ -115,7 +115,7 @@ tileClick tile model =
             case game.state of
                 SelectDrop ->
                     -- simply send drop message if we are in drop state
-                    ( model, firebaseDrop (tileKey tile) )
+                    ( model, socketDrop (tileKey tile) )
                 SelectChi ->
                     -- dropped tile is tile we are trying to chi
                     case game.dropped of
@@ -136,7 +136,7 @@ tileClick tile model =
                                         }
                                 in
                                 -- valid chi select
-                                ( model, firebaseCombo send )
+                                ( model, socketCombo send )
                         Nothing -> defaultRet model
                 SelectKong ->
                     -- check if we can kong the selected tile
@@ -150,7 +150,7 @@ tileClick tile model =
                                 , add_tile = False
                                 }
                         in
-                        ( model, firebaseCombo send )
+                        ( model, socketCombo send )
                     else
                         errorRet "Can't concealed Kong on that tile" model
 
@@ -214,7 +214,7 @@ drewRcv num model =
                 in
                 -- send command to reveal all hands
                 ( { model | game = Just newGame }
-                , firebaseSendHand (game.player, tiles, combos) )
+                , socketSendHand (game.player, tiles, combos) )
             else
                 let
                     newState = SelectDrop
@@ -360,7 +360,7 @@ winRcv player comboList model =
                 (tiles, combos) = Mahjong.handToLists hand
             in
             ( { model | game = Just newGame }
-            , firebaseSendHand (game.player, tiles, combos) )
+            , socketSendHand (game.player, tiles, combos) )
         Nothing -> defaultRet model
 
 -- receive information about all players' hands to reveal
@@ -431,7 +431,7 @@ pungButton model =
                                         , add_tile = True
                                         }
                                 in
-                                ( model, firebaseCombo send )
+                                ( model, socketCombo send )
                             else
                                 errorRet errStr model
                 -- if not actionable, then can't pung
@@ -452,7 +452,7 @@ chiButton model =
                         errorRet "No tile to Chi." model
                     Just tile ->
                         if Mahjong.canChi tile game.hand then
-                            ( model, firebaseChi game.player )
+                            ( model, socketChi game.player )
                         else
                             errorRet "Can't Chi." model
         Nothing -> defaultRet model
@@ -470,7 +470,7 @@ drawButton model =
                     errorRet "Can't draw right now" model
                 else
                     -- otherwise simply send signal to draw a card
-                    ( model, firebaseDraw game.player )
+                    ( model, socketDraw game.player )
         Nothing -> defaultRet model
 
 -- logic for when someone clicks on button to kong
@@ -498,7 +498,7 @@ kongButton model =
                                         , add_tile = True
                                         }
                                 in
-                                ( model, firebaseCombo send )
+                                ( model, socketCombo send )
                             else
                                 errorRet errorMsg model
                 SelectDrop ->
@@ -516,10 +516,10 @@ kongButton model =
                                     let
                                         key = tileKey tile
                                     in
-                                    ( model, firebaseSmallKong key )
+                                    ( model, socketSmallKong key )
                                 else if Mahjong.canHidKong game.hand then
                                     -- hidden kong send to server
-                                    ( model, firebaseHidKong game.player )
+                                    ( model, socketHidKong game.player )
                                 else
                                     errorRet errorMsg model
                 -- any other state means player can't kong
@@ -546,7 +546,7 @@ huButton model =
                                         (_, comboList) = Mahjong.handToLists newHand
                                     in
                                     -- valid Hu. Send to server.
-                                    ( model, firebaseHu (game.player, comboList) )
+                                    ( model, socketHu (game.player, comboList) )
                                 Nothing ->
                                     errorRet errorMsg model
                         Nothing ->
@@ -563,7 +563,7 @@ huButton model =
                                     (_, comboList) = Mahjong.handToLists newHand
                                 in
                                 ( model
-                                , firebaseHu (game.player, comboList) )
+                                , socketHu (game.player, comboList) )
                             Nothing ->
                                 errorRet errorMsg model
                     else
@@ -634,7 +634,7 @@ update msg model =
             
         -- Restart game with same four players
         Button Restart ->
-            ( model, firebaseRestart () )
+            ( model, socketRestart () )
 
         -- no button for drop. Shouldn't reach here
         Button Drop ->
@@ -642,15 +642,15 @@ update msg model =
 
         -- create a new game
         CreateGame ->
-            ( {model | lobbyStatus = Nothing}, firebaseCreateGame () )
+            ( {model | lobbyStatus = Nothing}, socketCreateGame () )
 
         -- Join a game
         JoinGame gid ->
-            ( model, firebaseJoinGame gid )
+            ( model, socketJoinGame gid )
 
         -- reset the server state
         Reset True ->
-            ( model, firebaseReset () )
+            ( model, socketReset () )
 
         -- response from server to reset. Reset all clients
         Reset False ->
@@ -668,20 +668,20 @@ update msg model =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ firebaseJoinRes Player
-        , firebaseStart Deal
-        , firebaseResetAll Reset
-        , firebaseDrawRcv (\x -> Rcv (Drew x))
-        , firebaseDropRcv (\x -> Rcv (Dropped x))
-        , firebaseComboRcv (\comboRet -> Rcv (Comboed comboRet.key comboRet.player comboRet.add_tile))
-        , firebaseChiRcv (\() -> (Rcv WillChi))
-        , firebaseHuRcv (\x -> Rcv (Win x.player x.combos))
-        , firebaseSmallKongRcv (\x -> Rcv (SmallKong x))
-        , firebaseHidKongRcv (\() -> (Rcv WillKong))
-        , firebaseHandRcv (\x -> (Rcv (Hands x)))
-        , firebaseLobbiesRcv (\x -> (Rcv (Lobbies x)))
-        , firebaseNoCreate (\() -> (Rcv NoCreate))
-        , firebaseTerminated (\() -> (Rcv Terminate))
+        [ socketJoinRes Player
+        , socketStart Deal
+        , socketResetAll Reset
+        , socketDrawRcv (\x -> Rcv (Drew x))
+        , socketDropRcv (\x -> Rcv (Dropped x))
+        , socketComboRcv (\comboRet -> Rcv (Comboed comboRet.key comboRet.player comboRet.add_tile))
+        , socketChiRcv (\() -> (Rcv WillChi))
+        , socketHuRcv (\x -> Rcv (Win x.player x.combos))
+        , socketSmallKongRcv (\x -> Rcv (SmallKong x))
+        , socketHidKongRcv (\() -> (Rcv WillKong))
+        , socketHandRcv (\x -> (Rcv (Hands x)))
+        , socketLobbiesRcv (\x -> (Rcv (Lobbies x)))
+        , socketNoCreate (\() -> (Rcv NoCreate))
+        , socketTerminated (\() -> (Rcv Terminate))
         ]
 
 -- View

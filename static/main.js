@@ -5175,17 +5175,17 @@ var $elm$core$Task$perform = F2(
 			A2($elm$core$Task$map, toMessage, task));
 	});
 var $elm$browser$Browser$element = _Browser_element;
+var $author$project$Main$initModel = {a: $elm$core$Maybe$Nothing, Z: _List_Nil, J: $elm$core$Maybe$Nothing, f: $elm$core$Maybe$Nothing};
 var $elm$json$Json$Encode$null = _Json_encodeNull;
-var $author$project$Main$firebaseUpdateLobbies = _Platform_outgoingPort(
-	'firebaseUpdateLobbies',
+var $author$project$Main$socketUpdateLobbies = _Platform_outgoingPort(
+	'socketUpdateLobbies',
 	function ($) {
 		return $elm$json$Json$Encode$null;
 	});
-var $author$project$Main$initModel = {a: $elm$core$Maybe$Nothing, Z: _List_Nil, J: $elm$core$Maybe$Nothing, f: $elm$core$Maybe$Nothing};
 var $author$project$Main$init = function (_v0) {
 	return _Utils_Tuple2(
 		$author$project$Main$initModel,
-		$author$project$Main$firebaseUpdateLobbies(0));
+		$author$project$Main$socketUpdateLobbies(0));
 };
 var $author$project$Server$Comboed = F3(
 	function (a, b, c) {
@@ -5228,15 +5228,15 @@ var $author$project$Server$Win = F2(
 	});
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$json$Json$Decode$null = _Json_decodeNull;
-var $author$project$Main$firebaseChiRcv = _Platform_incomingPort(
-	'firebaseChiRcv',
+var $author$project$Main$socketChiRcv = _Platform_incomingPort(
+	'socketChiRcv',
 	$elm$json$Json$Decode$null(0));
 var $elm$json$Json$Decode$andThen = _Json_andThen;
 var $elm$json$Json$Decode$bool = _Json_decodeBool;
 var $elm$json$Json$Decode$field = _Json_decodeField;
 var $elm$json$Json$Decode$int = _Json_decodeInt;
-var $author$project$Main$firebaseComboRcv = _Platform_incomingPort(
-	'firebaseComboRcv',
+var $author$project$Main$socketComboRcv = _Platform_incomingPort(
+	'socketComboRcv',
 	A2(
 		$elm$json$Json$Decode$andThen,
 		function (player) {
@@ -5254,11 +5254,11 @@ var $author$project$Main$firebaseComboRcv = _Platform_incomingPort(
 				A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$int));
 		},
 		A2($elm$json$Json$Decode$field, 'player', $elm$json$Json$Decode$int)));
-var $author$project$Main$firebaseDrawRcv = _Platform_incomingPort('firebaseDrawRcv', $elm$json$Json$Decode$int);
-var $author$project$Main$firebaseDropRcv = _Platform_incomingPort('firebaseDropRcv', $elm$json$Json$Decode$int);
+var $author$project$Main$socketDrawRcv = _Platform_incomingPort('socketDrawRcv', $elm$json$Json$Decode$int);
+var $author$project$Main$socketDropRcv = _Platform_incomingPort('socketDropRcv', $elm$json$Json$Decode$int);
 var $elm$json$Json$Decode$list = _Json_decodeList;
-var $author$project$Main$firebaseHandRcv = _Platform_incomingPort(
-	'firebaseHandRcv',
+var $author$project$Main$socketHandRcv = _Platform_incomingPort(
+	'socketHandRcv',
 	$elm$json$Json$Decode$list(
 		A2(
 			$elm$json$Json$Decode$andThen,
@@ -5278,11 +5278,11 @@ var $author$project$Main$firebaseHandRcv = _Platform_incomingPort(
 				$elm$json$Json$Decode$field,
 				'tiles',
 				$elm$json$Json$Decode$list($elm$json$Json$Decode$int)))));
-var $author$project$Main$firebaseHidKongRcv = _Platform_incomingPort(
-	'firebaseHidKongRcv',
+var $author$project$Main$socketHidKongRcv = _Platform_incomingPort(
+	'socketHidKongRcv',
 	$elm$json$Json$Decode$null(0));
-var $author$project$Main$firebaseHuRcv = _Platform_incomingPort(
-	'firebaseHuRcv',
+var $author$project$Main$socketHuRcv = _Platform_incomingPort(
+	'socketHuRcv',
 	A2(
 		$elm$json$Json$Decode$andThen,
 		function (player) {
@@ -5298,9 +5298,9 @@ var $author$project$Main$firebaseHuRcv = _Platform_incomingPort(
 					$elm$json$Json$Decode$list($elm$json$Json$Decode$int)));
 		},
 		A2($elm$json$Json$Decode$field, 'player', $elm$json$Json$Decode$int)));
-var $author$project$Main$firebaseJoinRes = _Platform_incomingPort('firebaseJoinRes', $elm$json$Json$Decode$int);
-var $author$project$Main$firebaseLobbiesRcv = _Platform_incomingPort(
-	'firebaseLobbiesRcv',
+var $author$project$Main$socketJoinRes = _Platform_incomingPort('socketJoinRes', $elm$json$Json$Decode$int);
+var $author$project$Main$socketLobbiesRcv = _Platform_incomingPort(
+	'socketLobbiesRcv',
 	$elm$json$Json$Decode$list(
 		A2(
 			$elm$json$Json$Decode$andThen,
@@ -5314,14 +5314,14 @@ var $author$project$Main$firebaseLobbiesRcv = _Platform_incomingPort(
 					A2($elm$json$Json$Decode$field, 'id', $elm$json$Json$Decode$int));
 			},
 			A2($elm$json$Json$Decode$field, 'players', $elm$json$Json$Decode$int))));
-var $author$project$Main$firebaseNoCreate = _Platform_incomingPort(
-	'firebaseNoCreate',
+var $author$project$Main$socketNoCreate = _Platform_incomingPort(
+	'socketNoCreate',
 	$elm$json$Json$Decode$null(0));
-var $author$project$Main$firebaseResetAll = _Platform_incomingPort('firebaseResetAll', $elm$json$Json$Decode$bool);
-var $author$project$Main$firebaseSmallKongRcv = _Platform_incomingPort('firebaseSmallKongRcv', $elm$json$Json$Decode$int);
+var $author$project$Main$socketResetAll = _Platform_incomingPort('socketResetAll', $elm$json$Json$Decode$bool);
+var $author$project$Main$socketSmallKongRcv = _Platform_incomingPort('socketSmallKongRcv', $elm$json$Json$Decode$int);
 var $elm$json$Json$Decode$array = _Json_decodeArray;
-var $author$project$Main$firebaseStart = _Platform_incomingPort(
-	'firebaseStart',
+var $author$project$Main$socketStart = _Platform_incomingPort(
+	'socketStart',
 	A2(
 		$elm$json$Json$Decode$andThen,
 		function (starting) {
@@ -5338,64 +5338,64 @@ var $author$project$Main$firebaseStart = _Platform_incomingPort(
 						$elm$json$Json$Decode$list($elm$json$Json$Decode$int))));
 		},
 		A2($elm$json$Json$Decode$field, 'starting', $elm$json$Json$Decode$int)));
-var $author$project$Main$firebaseTerminated = _Platform_incomingPort(
-	'firebaseTerminated',
+var $author$project$Main$socketTerminated = _Platform_incomingPort(
+	'socketTerminated',
 	$elm$json$Json$Decode$null(0));
 var $author$project$Main$subscriptions = function (model) {
 	return $elm$core$Platform$Sub$batch(
 		_List_fromArray(
 			[
-				$author$project$Main$firebaseJoinRes($author$project$Server$Player),
-				$author$project$Main$firebaseStart($author$project$Server$Deal),
-				$author$project$Main$firebaseResetAll($author$project$Server$Reset),
-				$author$project$Main$firebaseDrawRcv(
+				$author$project$Main$socketJoinRes($author$project$Server$Player),
+				$author$project$Main$socketStart($author$project$Server$Deal),
+				$author$project$Main$socketResetAll($author$project$Server$Reset),
+				$author$project$Main$socketDrawRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						$author$project$Server$Drew(x));
 				}),
-				$author$project$Main$firebaseDropRcv(
+				$author$project$Main$socketDropRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						$author$project$Server$Dropped(x));
 				}),
-				$author$project$Main$firebaseComboRcv(
+				$author$project$Main$socketComboRcv(
 				function (comboRet) {
 					return $author$project$Server$Rcv(
 						A3($author$project$Server$Comboed, comboRet.C, comboRet.f, comboRet.x));
 				}),
-				$author$project$Main$firebaseChiRcv(
+				$author$project$Main$socketChiRcv(
 				function (_v0) {
 					return $author$project$Server$Rcv($author$project$Server$WillChi);
 				}),
-				$author$project$Main$firebaseHuRcv(
+				$author$project$Main$socketHuRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						A2($author$project$Server$Win, x.f, x.aT));
 				}),
-				$author$project$Main$firebaseSmallKongRcv(
+				$author$project$Main$socketSmallKongRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						$author$project$Server$SmallKong(x));
 				}),
-				$author$project$Main$firebaseHidKongRcv(
+				$author$project$Main$socketHidKongRcv(
 				function (_v1) {
 					return $author$project$Server$Rcv($author$project$Server$WillKong);
 				}),
-				$author$project$Main$firebaseHandRcv(
+				$author$project$Main$socketHandRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						$author$project$Server$Hands(x));
 				}),
-				$author$project$Main$firebaseLobbiesRcv(
+				$author$project$Main$socketLobbiesRcv(
 				function (x) {
 					return $author$project$Server$Rcv(
 						$author$project$Server$Lobbies(x));
 				}),
-				$author$project$Main$firebaseNoCreate(
+				$author$project$Main$socketNoCreate(
 				function (_v2) {
 					return $author$project$Server$Rcv($author$project$Server$NoCreate);
 				}),
-				$author$project$Main$firebaseTerminated(
+				$author$project$Main$socketTerminated(
 				function (_v3) {
 					return $author$project$Server$Rcv($author$project$Server$Terminate);
 				})
@@ -5481,9 +5481,9 @@ var $author$project$Main$errorRet = F2(
 			return _Utils_Tuple2(model, $elm$core$Platform$Cmd$none);
 		}
 	});
-var $elm$json$Json$Encode$int = _Json_wrap;
-var $author$project$Main$firebaseChi = _Platform_outgoingPort('firebaseChi', $elm$json$Json$Encode$int);
 var $elm$core$Basics$neq = _Utils_notEqual;
+var $elm$json$Json$Encode$int = _Json_wrap;
+var $author$project$Main$socketChi = _Platform_outgoingPort('socketChi', $elm$json$Json$Encode$int);
 var $author$project$Main$chiButton = function (model) {
 	var _v0 = model.a;
 	if (!_v0.$) {
@@ -5498,7 +5498,7 @@ var $author$project$Main$chiButton = function (model) {
 				var tile = _v1.a;
 				return A2($author$project$Mahjong$canChi, tile, game.V) ? _Utils_Tuple2(
 					model,
-					$author$project$Main$firebaseChi(game.f)) : A2($author$project$Main$errorRet, 'Can\'t Chi.', model);
+					$author$project$Main$socketChi(game.f)) : A2($author$project$Main$errorRet, 'Can\'t Chi.', model);
 			}
 		}
 	} else {
@@ -7009,14 +7009,14 @@ var $author$project$Main$comboRcv = F4(
 		}
 	});
 var $author$project$Server$Actionable = 3;
-var $author$project$Main$firebaseDraw = _Platform_outgoingPort('firebaseDraw', $elm$json$Json$Encode$int);
+var $author$project$Main$socketDraw = _Platform_outgoingPort('socketDraw', $elm$json$Json$Encode$int);
 var $author$project$Main$drawButton = function (model) {
 	var _v0 = model.a;
 	if (!_v0.$) {
 		var game = _v0.a;
 		return (!_Utils_eq(game.m, game.f)) ? A2($author$project$Main$errorRet, 'Wait your turn to draw.', model) : (((game.P !== 3) && (game.P !== 4)) ? A2($author$project$Main$errorRet, 'Can\'t draw right now', model) : _Utils_Tuple2(
 			model,
-			$author$project$Main$firebaseDraw(game.f)));
+			$author$project$Main$socketDraw(game.f)));
 	} else {
 		return $author$project$Main$defaultRet(model);
 	}
@@ -7387,31 +7387,6 @@ var $author$project$Mahjong$drawTile = F2(
 		return $author$project$Mahjong$updateWinning(
 			A2($author$project$Mahjong$addTile, tile, hand));
 	});
-var $elm$json$Json$Encode$list = F2(
-	function (func, entries) {
-		return _Json_wrap(
-			A3(
-				$elm$core$List$foldl,
-				_Json_addEntry(func),
-				_Json_emptyArray(0),
-				entries));
-	});
-var $author$project$Main$firebaseSendHand = _Platform_outgoingPort(
-	'firebaseSendHand',
-	function ($) {
-		var a = $.a;
-		var b = $.b;
-		var c = $.c;
-		return A2(
-			$elm$json$Json$Encode$list,
-			$elm$core$Basics$identity,
-			_List_fromArray(
-				[
-					$elm$json$Json$Encode$int(a),
-					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(b),
-					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(c)
-				]));
-	});
 var $author$project$Mahjong$handToLists = function (_v0) {
 	var un = _v0.a;
 	var _v1 = _v0.b;
@@ -7436,6 +7411,31 @@ var $author$project$Tile$shuffleConvert = function (x) {
 		$author$project$Tile$D(
 			$author$project$Tile$dragonConvert(((x - 124) / 4) | 0))))));
 };
+var $elm$json$Json$Encode$list = F2(
+	function (func, entries) {
+		return _Json_wrap(
+			A3(
+				$elm$core$List$foldl,
+				_Json_addEntry(func),
+				_Json_emptyArray(0),
+				entries));
+	});
+var $author$project$Main$socketSendHand = _Platform_outgoingPort(
+	'socketSendHand',
+	function ($) {
+		var a = $.a;
+		var b = $.b;
+		var c = $.c;
+		return A2(
+			$elm$json$Json$Encode$list,
+			$elm$core$Basics$identity,
+			_List_fromArray(
+				[
+					$elm$json$Json$Encode$int(a),
+					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(b),
+					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(c)
+				]));
+	});
 var $author$project$Main$drewRcv = F2(
 	function (num, model) {
 		var _v0 = model.a;
@@ -7461,7 +7461,7 @@ var $author$project$Main$drewRcv = F2(
 						{
 							a: $elm$core$Maybe$Just(newGame)
 						}),
-					$author$project$Main$firebaseSendHand(
+					$author$project$Main$socketSendHand(
 						_Utils_Tuple3(game.f, tiles, combos)));
 			} else {
 				var newState = 0;
@@ -7578,22 +7578,6 @@ var $author$project$Main$dropRcv = F2(
 		} else {
 			return $author$project$Main$defaultRet(model);
 		}
-	});
-var $author$project$Main$firebaseCreateGame = _Platform_outgoingPort(
-	'firebaseCreateGame',
-	function ($) {
-		return $elm$json$Json$Encode$null;
-	});
-var $author$project$Main$firebaseJoinGame = _Platform_outgoingPort('firebaseJoinGame', $elm$json$Json$Encode$int);
-var $author$project$Main$firebaseReset = _Platform_outgoingPort(
-	'firebaseReset',
-	function ($) {
-		return $elm$json$Json$Encode$null;
-	});
-var $author$project$Main$firebaseRestart = _Platform_outgoingPort(
-	'firebaseRestart',
-	function ($) {
-		return $elm$json$Json$Encode$null;
 	});
 var $author$project$Mahjong$getHand_r = F2(
 	function (hand, nums) {
@@ -7742,8 +7726,13 @@ var $author$project$Mahjong$canHu = F2(
 		var m = _v0.b;
 		return A2($author$project$TileMap$get, tile, un.U);
 	});
-var $author$project$Main$firebaseHu = _Platform_outgoingPort(
-	'firebaseHu',
+var $author$project$Mahjong$makeWinningHand = function (combos) {
+	var un = $author$project$Mahjong$initUnmatched;
+	var matched = _Utils_Tuple2(combos, 5);
+	return A2($author$project$Mahjong$Hand, un, matched);
+};
+var $author$project$Main$socketHu = _Platform_outgoingPort(
+	'socketHu',
 	function ($) {
 		var a = $.a;
 		var b = $.b;
@@ -7756,11 +7745,6 @@ var $author$project$Main$firebaseHu = _Platform_outgoingPort(
 					$elm$json$Json$Encode$list($elm$json$Json$Encode$int)(b)
 				]));
 	});
-var $author$project$Mahjong$makeWinningHand = function (combos) {
-	var un = $author$project$Mahjong$initUnmatched;
-	var matched = _Utils_Tuple2(combos, 5);
-	return A2($author$project$Mahjong$Hand, un, matched);
-};
 var $author$project$Main$huButton = function (model) {
 	var _v0 = model.a;
 	if (!_v0.$) {
@@ -7780,7 +7764,7 @@ var $author$project$Main$huButton = function (model) {
 						var comboList = _v4.b;
 						return _Utils_Tuple2(
 							model,
-							$author$project$Main$firebaseHu(
+							$author$project$Main$socketHu(
 								_Utils_Tuple2(game.f, comboList)));
 					} else {
 						return A2($author$project$Main$errorRet, errorMsg, model);
@@ -7798,7 +7782,7 @@ var $author$project$Main$huButton = function (model) {
 						var comboList = _v6.b;
 						return _Utils_Tuple2(
 							model,
-							$author$project$Main$firebaseHu(
+							$author$project$Main$socketHu(
 								_Utils_Tuple2(game.f, comboList)));
 					} else {
 						return A2($author$project$Main$errorRet, errorMsg, model);
@@ -7844,8 +7828,8 @@ var $elm$json$Json$Encode$object = function (pairs) {
 			_Json_emptyObject(0),
 			pairs));
 };
-var $author$project$Main$firebaseCombo = _Platform_outgoingPort(
-	'firebaseCombo',
+var $author$project$Main$socketCombo = _Platform_outgoingPort(
+	'socketCombo',
 	function ($) {
 		return $elm$json$Json$Encode$object(
 			_List_fromArray(
@@ -7864,8 +7848,8 @@ var $author$project$Main$firebaseCombo = _Platform_outgoingPort(
 					$elm$json$Json$Encode$int($.f))
 				]));
 	});
-var $author$project$Main$firebaseHidKong = _Platform_outgoingPort('firebaseHidKong', $elm$json$Json$Encode$int);
-var $author$project$Main$firebaseSmallKong = _Platform_outgoingPort('firebaseSmallKong', $elm$json$Json$Encode$int);
+var $author$project$Main$socketHidKong = _Platform_outgoingPort('socketHidKong', $elm$json$Json$Encode$int);
+var $author$project$Main$socketSmallKong = _Platform_outgoingPort('socketSmallKong', $elm$json$Json$Encode$int);
 var $author$project$Main$kongButton = function (model) {
 	var _v0 = model.a;
 	if (!_v0.$) {
@@ -7885,7 +7869,7 @@ var $author$project$Main$kongButton = function (model) {
 						var send = {x: true, N: true, C: key, f: game.f};
 						return _Utils_Tuple2(
 							model,
-							$author$project$Main$firebaseCombo(send));
+							$author$project$Main$socketCombo(send));
 					} else {
 						return A2($author$project$Main$errorRet, errorMsg, model);
 					}
@@ -7903,12 +7887,12 @@ var $author$project$Main$kongButton = function (model) {
 							var key = $author$project$Tile$tileKey(tile);
 							return _Utils_Tuple2(
 								model,
-								$author$project$Main$firebaseSmallKong(key));
+								$author$project$Main$socketSmallKong(key));
 						} else {
 							if ($author$project$Mahjong$canHidKong(game.V)) {
 								return _Utils_Tuple2(
 									model,
-									$author$project$Main$firebaseHidKong(game.f));
+									$author$project$Main$socketHidKong(game.f));
 							} else {
 								return A2($author$project$Main$errorRet, errorMsg, model);
 							}
@@ -7967,7 +7951,7 @@ var $author$project$Main$pungButton = function (model) {
 					var send = {x: true, N: false, C: key, f: game.f};
 					return _Utils_Tuple2(
 						model,
-						$author$project$Main$firebaseCombo(send));
+						$author$project$Main$socketCombo(send));
 				} else {
 					return A2($author$project$Main$errorRet, errStr, model);
 				}
@@ -8082,6 +8066,22 @@ var $author$project$Main$smallKongRcv = F2(
 			return $author$project$Main$defaultRet(model);
 		}
 	});
+var $author$project$Main$socketCreateGame = _Platform_outgoingPort(
+	'socketCreateGame',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
+var $author$project$Main$socketJoinGame = _Platform_outgoingPort('socketJoinGame', $elm$json$Json$Encode$int);
+var $author$project$Main$socketReset = _Platform_outgoingPort(
+	'socketReset',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
+var $author$project$Main$socketRestart = _Platform_outgoingPort(
+	'socketRestart',
+	function ($) {
+		return $elm$json$Json$Encode$null;
+	});
 var $author$project$Mahjong$canTileHidKong = F2(
 	function (tile, _v0) {
 		var un = _v0.a;
@@ -8148,7 +8148,7 @@ var $author$project$Mahjong$confirmChi = F3(
 				un.g) ? (A2($elm$core$List$member, chiTile, tiles) ? key : (-2)) : (-1);
 		}
 	});
-var $author$project$Main$firebaseDrop = _Platform_outgoingPort('firebaseDrop', $elm$json$Json$Encode$int);
+var $author$project$Main$socketDrop = _Platform_outgoingPort('socketDrop', $elm$json$Json$Encode$int);
 var $author$project$Main$tileClick = F2(
 	function (tile, model) {
 		var _v0 = model.a;
@@ -8159,7 +8159,7 @@ var $author$project$Main$tileClick = F2(
 				case 0:
 					return _Utils_Tuple2(
 						model,
-						$author$project$Main$firebaseDrop(
+						$author$project$Main$socketDrop(
 							$author$project$Tile$tileKey(tile)));
 				case 1:
 					var _v2 = game.aj;
@@ -8175,7 +8175,7 @@ var $author$project$Main$tileClick = F2(
 								var send = {x: false, N: false, C: chiRet, f: game.f};
 								return _Utils_Tuple2(
 									model,
-									$author$project$Main$firebaseCombo(send));
+									$author$project$Main$socketCombo(send));
 							}
 						}
 					} else {
@@ -8188,7 +8188,7 @@ var $author$project$Main$tileClick = F2(
 						var send = {x: false, N: true, C: key, f: game.f};
 						return _Utils_Tuple2(
 							model,
-							$author$project$Main$firebaseCombo(send));
+							$author$project$Main$socketCombo(send));
 					} else {
 						return A2($author$project$Main$errorRet, 'Can\'t concealed Kong on that tile', model);
 					}
@@ -8232,7 +8232,7 @@ var $author$project$Main$winRcv = F3(
 					{
 						a: $elm$core$Maybe$Just(newGame)
 					}),
-				$author$project$Main$firebaseSendHand(
+				$author$project$Main$socketSendHand(
 					_Utils_Tuple3(game.f, tiles, combos)));
 		} else {
 			return $author$project$Main$defaultRet(model);
@@ -8337,7 +8337,7 @@ var $author$project$Main$update = F2(
 						var _v8 = msg.a;
 						return _Utils_Tuple2(
 							model,
-							$author$project$Main$firebaseRestart(0));
+							$author$project$Main$socketRestart(0));
 					default:
 						var _v9 = msg.a;
 						return $author$project$Main$defaultRet(model);
@@ -8347,17 +8347,17 @@ var $author$project$Main$update = F2(
 					_Utils_update(
 						model,
 						{J: $elm$core$Maybe$Nothing}),
-					$author$project$Main$firebaseCreateGame(0));
+					$author$project$Main$socketCreateGame(0));
 			case 7:
 				var gid = msg.a;
 				return _Utils_Tuple2(
 					model,
-					$author$project$Main$firebaseJoinGame(gid));
+					$author$project$Main$socketJoinGame(gid));
 			default:
 				if (msg.a) {
 					return _Utils_Tuple2(
 						model,
-						$author$project$Main$firebaseReset(0));
+						$author$project$Main$socketReset(0));
 				} else {
 					var newModel = _Utils_update(
 						model,
